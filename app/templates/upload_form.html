@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CSV Uploader</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Upload Links CSV</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <label for="bot">Select Bot:</label>
+      <select name="bot" id="bot" required>
+        <option value="sun-shield">Helia Sun Shield</option>
+        <option value="growth-ray">Helia Growth Ray</option>
+        <option value="sunbeam">Helia Sunbeam</option>
+        <option value="inner-dawn">Helia Inner Dawn</option>
+      </select>
+
+      <label for="file">Select CSV File:</label>
+      <input type="file" name="file" id="file" accept=".csv" required />
+
+      <button type="submit">Upload</button>
+    </form>
+
+    <div id="response"></div>
+  </div>
+  <script src="/static/upload.js"></script>
+</body>
+</html>
