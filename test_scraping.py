@@ -24,5 +24,5 @@ def scrape_pdf(url: str) -> str:
     return txt.strip() or "Error: no text found"
 
 if __name__ == "__main__":
-    url = "https://connectsafely.org/wp-content/uploads/2022/05/Parents-Guide-to-TikTok-2022-final.pdf"
-    print(scrape_pdf(url))
+    # url = "https://connectsafely.org/wp-content/uploads/2022/05/Parents-Guide-to-TikTok-2022-final.pdf"
+    # print(scrape_pdf(url))
