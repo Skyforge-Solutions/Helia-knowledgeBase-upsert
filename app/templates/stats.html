@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KB Pipeline Stats</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/stats.css">
+</head>
+<body>
+  <div class="container stats-container">
+    <nav class="nav-links">
+      <a href="/" class="nav-link">Upload</a>
+      <a href="/stats" class="nav-link active">Stats</a>
+    </nav>
+
+    <h1>KB Pipeline Statistics</h1>
+    
+    <div class="summary-cards">
+      <div class="summary-card" id="total-count">
+        <h3>Total</h3>
+        <div class="count">0</div>
+      </div>
+      <div class="summary-card" id="completed-count">
+        <h3>Completed</h3>
+        <div class="count">0</div>
+      </div>
+      <div class="summary-card" id="pending-count">
+        <h3>Pending</h3>
+        <div class="count">0</div>
+      </div>
+      <div class="summary-card" id="failed-count">
+        <h3>Failed</h3>
+        <div class="count">0</div>
+      </div>
+      <div class="summary-card" id="processing-count">
+        <h3>Processing</h3>
+        <div class="count">0</div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <div class="filter-group">
+        <label for="statusFilter">Status:</label>
+        <select id="statusFilter">
+          <option value="">All</option>
+          <option value="completed">Completed</option>
+          <option value="pending">Pending</option>
+          <option value="failed">Failed</option>
+          <option value="processing">Processing</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="botFilter">Bot:</label>
+        <select id="botFilter">
+          <option value="">All</option>
+          <option value="sun-shield">Sun Shield</option>
+          <option value="growth-ray">Growth Ray</option>
+          <option value="sunbeam">Sunbeam</option>
+          <option value="inner-dawn">Inner Dawn</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="sortBy">Sort by:</label>
+        <select id="sortBy">
+          <option value="submitted_at">Date</option>
+          <option value="status">Status</option>
+          <option value="bot">Bot</option>
+          <option value="type">Type</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="sortOrder">Order:</label>
+        <select id="sortOrder">
+          <option value="desc">Newest First</option>
+          <option value="asc">Oldest First</option>
+        </select>
+      </div>
+
+      <button id="refreshButton" class="refresh-btn">Refresh</button>
+    </div>
+
+    <div class="links-table-container">
+      <table class="links-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>URL</th>
+            <th>Type</th>
+            <th>Bot</th>
+            <th>Status</th>
+            <th>Error</th>
+          </tr>
+        </thead>
+        <tbody id="linksTableBody">
+          <!-- Data will be loaded here dynamically -->
+          <tr class="loading-row">
+            <td colspan="6">Loading data...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button id="prevPage" disabled>Previous</button>
+      <span id="pageInfo">Page 1</span>
+      <button id="nextPage">Next</button>
+    </div>
+  </div>
+  <script src="/static/stats.js"></script>
+</body>
+</html>

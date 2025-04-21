@@ -25,3 +25,24 @@ button {
 #response {
   margin-top: 1rem;
 }
+
+/* Navigation links */
+.nav-links {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #555;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.nav-link.active {
+  color: #4CAF50;
+  border-bottom: 2px solid #4CAF50;
+}

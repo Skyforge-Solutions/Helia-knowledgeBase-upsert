@@ -18,7 +18,7 @@ def is_valid_link(link: str) -> bool:
 
 @router.post("/upload")
 async def upload_links(
-    file: UploadFile = File(..., max_length=MAX_FILE_SIZE),
+    file: UploadFile = File(...),
     bot: str = Form(...),
     session: AsyncSession = Depends(get_session),
 ):

@@ -7,14 +7,19 @@
 </head>
 <body>
   <div class="container">
+    <nav class="nav-links">
+      <a href="/" class="nav-link active">Upload</a>
+      <a href="/stats" class="nav-link">Stats</a>
+    </nav>
+
     <h1>Upload Links CSV</h1>
     <form id="uploadForm" enctype="multipart/form-data">
       <label for="bot">Select Bot:</label>
       <select name="bot" id="bot" required>
         <option value="sun-shield">Helia Sun Shield</option>
-        <option value="growth-ray">Helia Growth Ray</option>
+        <option value="growth-ray">Helia Growth Ray</option>
         <option value="sunbeam">Helia Sunbeam</option>
-        <option value="inner-dawn">Helia Inner Dawn</option>
+        <option value="inner-dawn">Helia Inner Dawn</option>
       </select>
 
       <label for="file">Select CSV File:</label>
