@@ -21,7 +21,7 @@ async def _next_batch(session: AsyncSession):
     )
     rows = (await session.execute(stmt)).scalars().all()
 
-    # mark them as “processing” so that *other* workers skip them
+    # mark them as “processing” 
     if rows:
         ids = [r.id for r in rows]
         await session.execute(

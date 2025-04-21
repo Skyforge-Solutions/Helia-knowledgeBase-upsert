@@ -4,9 +4,8 @@ from sqlalchemy import select, func
 from sqlalchemy.sql import expression
 from app.model import ResourceLink
 from app.db import get_session
-from typing import List, Optional
-from datetime import datetime
-import json
+from typing import Optional
+
 
 router = APIRouter()
 
@@ -20,29 +19,29 @@ async def get_stats_data(
     limit: int = 100,
     offset: int = 0,
 ):
-    # Build the query
+    
     query = select(ResourceLink)
     
-    # Apply filters
+   
     if status:
         query = query.where(ResourceLink.status == status)
     if bot:
         query = query.where(ResourceLink.bot == bot)
     
-    # Apply sorting
+   
     if sort_order.lower() == "asc":
         query = query.order_by(getattr(ResourceLink, sort_by).asc())
     else:
         query = query.order_by(getattr(ResourceLink, sort_by).desc())
     
-    # Apply pagination
+  
     query = query.limit(limit).offset(offset)
     
-    # Execute query
+   
     results = await session.execute(query)
     links = results.scalars().all()
     
-    # Get summary counts
+ 
     count_query = select(
         ResourceLink.status,
         func.count(ResourceLink.id)
@@ -51,7 +50,7 @@ async def get_stats_data(
     count_results = await session.execute(count_query)
     counts = {status: count for status, count in count_results.all()}
     
-    # Get bot-specific counts
+  
     bot_query = select(
         ResourceLink.bot,
         ResourceLink.status,
@@ -66,7 +65,7 @@ async def get_stats_data(
             bot_counts[bot_name] = {}
         bot_counts[bot_name][status] = count
     
-    # Format response data
+  
     link_data = []
     for link in links:
         link_data.append({

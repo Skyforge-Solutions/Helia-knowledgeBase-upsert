@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pinecone Admin</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/pinecone_admin.css">
+</head>
+<body>
+  <div class="container admin-container">
+    <nav class="nav-links">
+      <a href="/" class="nav-link">Upload</a>
+      <a href="/stats" class="nav-link">Stats</a>
+      <a href="/pinecone-admin" class="nav-link active">Pinecone Admin</a>
+    </nav>
+
+    <h1>Pinecone Database Admin</h1>
+    
+    <div class="index-info-container">
+      <div class="info-panel">
+        <h2>Index Information</h2>
+        <div class="info-content" id="index-info">
+          <div class="loading">Loading index information...</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="search-container">
+      <div class="info-panel">
+        <h2>Search Vectors</h2>
+        <form id="search-form" class="search-form">
+          <div class="search-inputs">
+            <div class="form-group">
+              <label for="search-namespace">Select Namespace:</label>
+              <select id="search-namespace" required>
+                <option value="">Select a namespace...</option>
+                <!-- Namespaces will be populated dynamically -->
+              </select>
+            </div>
+            <div class="form-group flex-grow">
+              <label for="search-query">Search Query:</label>
+              <input type="text" id="search-query" placeholder="Enter your search query in English..." required>
+            </div>
+            <div class="form-group">
+              <label for="search-limit">Results:</label>
+              <select id="search-limit">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="view-btn">Search</button>
+        </form>
+        <div id="search-results" class="search-results">
+          <!-- Search results will be displayed here -->
+        </div>
+      </div>
+    </div>
+    
+    <div class="namespaces-container">
+      <h2>Namespaces</h2>
+      <div id="namespaces-list">
+        <div class="loading">Loading namespaces...</div>
+      </div>
+    </div>
+
+    <div id="namespace-details-container" class="namespace-details-container" style="display: none;">
+      <h2>Namespace Details: <span id="selected-namespace-name"></span></h2>
+      <button id="back-button" class="secondary-btn">Back to Namespaces</button>
+      <div class="danger-zone">
+        <h3>Danger Zone</h3>
+        <p>This action will delete all vectors in this namespace and cannot be undone.</p>
+        <button id="clear-namespace-btn" class="danger-btn">Clear Namespace Data</button>
+      </div>
+      <div class="samples-container">
+        <h3>Sample Vectors</h3>
+        <div id="namespace-samples">
+          <div class="loading">Loading samples...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for confirmation dialogs -->
+    <div id="confirmation-modal" class="modal">
+      <div class="modal-content">
+        <h3 id="modal-title">Confirm Action</h3>
+        <p id="modal-message">Are you sure you want to proceed?</p>
+        <div class="modal-buttons">
+          <button id="modal-cancel" class="secondary-btn">Cancel</button>
+          <button id="modal-confirm" class="danger-btn">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/static/pinecone_admin.js"></script>
+</body>
+</html>

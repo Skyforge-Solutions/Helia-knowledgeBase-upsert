@@ -7,6 +7,7 @@ from app.db import engine
 from app.model import Base
 from app.api.upload import router as upload_router
 from app.api.stats import router as stats_router
+from pinecone_admin.api import router as pinecone_admin_router
 from app.worker import poll_forever 
 import asyncio
 import contextlib
@@ -29,6 +30,7 @@ app = FastAPI(lifespan=lifespan)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
+pinecone_admin_templates = Jinja2Templates(directory="pinecone_admin/templates")
 
 @app.get("/")
 def upload_form(request: Request):
@@ -38,5 +40,10 @@ def upload_form(request: Request):
 def stats_page(request: Request):
     return templates.TemplateResponse("stats.html", {"request": request})
 
+@app.get("/pinecone-admin")
+def pinecone_admin_page(request: Request):
+    return pinecone_admin_templates.TemplateResponse("index.html", {"request": request})
+
 app.include_router(upload_router, prefix="/api")
 app.include_router(stats_router, prefix="/api/stats")
+app.include_router(pinecone_admin_router, prefix="/pinecone-admin/api")
