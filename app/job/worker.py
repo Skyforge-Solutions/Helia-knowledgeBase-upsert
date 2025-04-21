@@ -2,9 +2,9 @@
 import asyncio, logging, uuid, os, contextlib
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.db import AsyncSessionLocal
-from app.model import ResourceLink
-from app.process import process_record
+from app.database.db import AsyncSessionLocal
+from app.database.model import ResourceLink
+from app.job.process import process_record
 
 logger = logging.getLogger("poller")
 POLL_INTERVAL = 15               # seconds between scans

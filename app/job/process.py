@@ -37,7 +37,7 @@ async def process_record(record_id: str):
             await asyncio.to_thread(
                 upsert_text,
                 [text],
-                [{"source": rec.link}],
+                [{"source": rec.link, "id": str(rec.id)}],
                 rec.bot
             )
             logger.info("Record %s: upsert complete", rec.id)

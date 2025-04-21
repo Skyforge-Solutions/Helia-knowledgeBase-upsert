@@ -1,8 +1,8 @@
 from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.model import ResourceLink
-from app.db import get_session
+from app.database.model import ResourceLink
+from app.database.db import get_session
 import csv, uuid
 from io import StringIO
 from urllib.parse import urlparse
@@ -90,7 +90,8 @@ async def upload_links(
 
     to_insert = []
     for link in new_links:
-        link_type = "pdf" if link.lower().endswith(".pdf") else "url"
+        path = urlparse(link).path  # strips off any ?v=... or other query
+        link_type = "pdf" if path.lower().endswith(".pdf") else "url"
         to_insert.append(ResourceLink(
             id=uuid.uuid4(),
             link=link,

@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from sqlalchemy.sql import expression
-from app.model import ResourceLink
-from app.db import get_session
+from app.database.model import ResourceLink
+from app.database.db import get_session
 from typing import Optional
 
 

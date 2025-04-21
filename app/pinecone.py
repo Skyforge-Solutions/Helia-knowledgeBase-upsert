@@ -1,10 +1,15 @@
 import os
+import logging
 from dotenv import load_dotenv
 from pinecone import Pinecone
 from enum import Enum
 
 # Load environment variables
 load_dotenv()
+
+# Initialize logger
+logger = logging.getLogger("pinecone")
+logger.setLevel(logging.INFO)
 
 # Initialize Pinecone client
 pc = Pinecone(
@@ -56,15 +61,19 @@ def upsert_text(texts: list[str], metadata: list[dict], bot: str) -> int:
 
     # 1) Generate embeddings for passages
     embeddings = embed_texts(texts, input_type="passage")
+    logger.info("Upserting %d vectors into namespace=%s", len(embeddings), bot)
 
-    # 2) Build the vectors payload
-    vectors = [
-        (str(i), embedding, {**meta, "text": text})
-        for i, (text, embedding, meta) in enumerate(zip(texts, embeddings, metadata))
-    ]
+    # 2) Build the vectors payload, using meta["id"] as the unique vector ID
+    vectors = []
+    for i, (text, embedding, meta) in enumerate(zip(texts, embeddings, metadata)):
+        vec_id = meta.get("id") or str(i)
+        vectors.append(
+            (vec_id, embedding, {**meta, "text": text})
+        )
 
     # 3) Upsert into Pinecone
     resp = index.upsert(vectors=vectors, namespace=bot)
+    logger.info("Pinecone response upserted_count=%d", resp.get("upserted_count", 0))
     return resp["upserted_count"]
 
 def query_text(query: str, bot: str, top_k: int = 5) -> list[dict]:

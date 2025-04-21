@@ -3,12 +3,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from app.db import engine
-from app.model import Base
+from app.database.db import engine
+from app.database.model import Base
 from app.api.upload import router as upload_router
 from app.api.stats import router as stats_router
 from pinecone_admin.api import router as pinecone_admin_router
-from app.worker import poll_forever 
+from app.job.worker import poll_forever 
 import asyncio
 import contextlib
 
