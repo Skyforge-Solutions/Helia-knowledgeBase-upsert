@@ -3,6 +3,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+import uvicorn
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from app.database.db import engine
 from app.database.model import Base
 from app.api.upload import router as upload_router
@@ -47,3 +51,7 @@ def pinecone_admin_page(request: Request):
 app.include_router(upload_router, prefix="/api")
 app.include_router(stats_router, prefix="/api/stats")
 app.include_router(pinecone_admin_router, prefix="/pinecone-admin/api")
+
+
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.pinecone import pc, index, BotNamespace, INDEX_NAME, query_text
+from app.pinecone_client import pc, index, BotNamespace, INDEX_NAME, query_text
 from typing import List, Dict, Any, Optional
 import logging
 

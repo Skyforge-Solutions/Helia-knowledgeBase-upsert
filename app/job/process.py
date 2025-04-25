@@ -4,7 +4,7 @@ import os, asyncio, logging
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.db import AsyncSessionLocal
 from app.database.model import ResourceLink
-from app.pinecone import upsert_text
+from app.pinecone_client import upsert_text
 from app.scraper import scrape_blog, scrape_pdf
 
 logger = logging.getLogger("processor")

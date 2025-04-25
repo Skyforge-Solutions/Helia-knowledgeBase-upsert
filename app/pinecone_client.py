@@ -17,6 +17,7 @@ pc = Pinecone(
     environment=os.getenv("PINECONE_ENVIRONMENT")
 )
 
+
 # Define the index name
 INDEX_NAME = "helia-chat-kb"
 
