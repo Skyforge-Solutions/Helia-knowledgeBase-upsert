@@ -2,34 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CSV Uploader</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+  <header class="app-header">
+    <div class="nav-container">
+      <nav class="nav-links">
+        <a href="/" class="nav-link active">Upload</a>
+        <a href="/stats" class="nav-link">Stats</a>
+        <a href="/pinecone-admin" class="nav-link">Pinecone Admin</a>
+      </nav>
+    </div>
+  </header>
+
   <div class="container">
-    <nav class="nav-links">
-      <a href="/" class="nav-link active">Upload</a>
-      <a href="/stats" class="nav-link">Stats</a>
-    </nav>
-
     <h1>Upload Links CSV</h1>
+    
     <form id="uploadForm" enctype="multipart/form-data">
-      <label for="bot">Select Bot:</label>
-      <select name="bot" id="bot" required>
-        <option value="sun-shield">Helia Sun Shield</option>
-        <option value="growth-ray">Helia Growth Ray</option>
-        <option value="sunbeam">Helia Sunbeam</option>
-        <option value="inner-dawn">Helia Inner Dawn</option>
-      </select>
+      <div class="form-group">
+        <label for="bot">Select Bot:</label>
+        <select name="bot" id="bot" required>
+          <option value="sun-shield">Helia Sun Shield</option>
+          <option value="growth-ray">Helia Growth Ray</option>
+          <option value="sunbeam">Helia Sunbeam</option>
+          <option value="inner-dawn">Helia Inner Dawn</option>
+        </select>
+      </div>
 
-      <label for="file">Select CSV File:</label>
-      <input type="file" name="file" id="file" accept=".csv" required />
+      <div class="form-group">
+        <label for="file">Select CSV File:</label>
+        <input type="file" name="file" id="file" accept=".csv" required />
+      </div>
 
-      <button type="submit">Upload</button>
+      <button type="submit" id="submitBtn">
+        <span class="btn-text">Upload</span>
+        <span class="btn-loading" style="display: none">
+          <div class="loading-spinner"></div>
+        </span>
+      </button>
     </form>
 
     <div id="response"></div>
   </div>
+  
   <script src="/static/upload.js"></script>
 </body>
 </html>

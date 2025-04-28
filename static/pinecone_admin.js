@@ -16,6 +16,9 @@ const elements = {
   modalConfirm: document.getElementById('modal-confirm'),
   // Search form elements
   searchForm: document.getElementById('search-form'),
+  searchButton: document.getElementById('search-button'),
+  searchButtonText: document.querySelector('#search-button .btn-text'),
+  searchButtonLoading: document.querySelector('#search-button .btn-loading'),
   searchNamespaceSelect: document.getElementById('search-namespace'),
   searchQuery: document.getElementById('search-query'),
   searchLimit: document.getElementById('search-limit'),
@@ -25,11 +28,68 @@ const elements = {
 // State
 const state = {
   selectedNamespace: null,
-  stats: null
+  stats: null,
+  isLoading: {
+    indexInfo: false,
+    namespaces: false,
+    samples: false,
+    search: false,
+    clearOperation: false
+  }
 };
+
+// Set loading state for different UI components
+function setLoading(component, isLoading) {
+  state.isLoading[component] = isLoading;
+  
+  if (component === 'search') {
+    elements.searchButton.disabled = isLoading;
+    elements.searchButtonText.style.display = isLoading ? 'none' : 'inline-block';
+    elements.searchButtonLoading.style.display = isLoading ? 'inline-block' : 'none';
+  } else if (component === 'clearOperation') {
+    elements.clearNamespaceBtn.disabled = isLoading;
+    elements.clearNamespaceBtn.textContent = isLoading ? 'Clearing...' : 'Clear Namespace Data';
+  }
+}
+
+// Show error message
+function showError(container, message) {
+  container.innerHTML = `
+    <div class="message error">
+      <strong>Error:</strong> ${message}
+    </div>
+  `;
+}
+
+// Show success message
+function showSuccess(container, message) {
+  container.innerHTML = `
+    <div class="message success">
+      ${message}
+    </div>
+  `;
+}
+
+// Show no data message
+function showNoData(container, message = "No data available") {
+  container.innerHTML = `<div class="no-data">${message}</div>`;
+}
+
+// Show loading indicator
+function showLoading(container, message = "Loading...") {
+  container.innerHTML = `
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <div>${message}</div>
+    </div>
+  `;
+}
 
 // Fetch index stats
 async function fetchPineconeStats() {
+  setLoading('indexInfo', true);
+  setLoading('namespaces', true);
+  
   try {
     const response = await fetch('/pinecone-admin/api/stats');
     if (!response.ok) throw new Error('Failed to fetch Pinecone stats');
@@ -41,8 +101,11 @@ async function fetchPineconeStats() {
     populateSearchNamespaces(data.namespaces);
   } catch (error) {
     console.error('Error fetching Pinecone stats:', error);
-    elements.indexInfo.innerHTML = `<div class="error">Error: ${error.message}</div>`;
-    elements.namespacesList.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+    showError(elements.indexInfo, error.message);
+    showError(elements.namespacesList, error.message);
+  } finally {
+    setLoading('indexInfo', false);
+    setLoading('namespaces', false);
   }
 }
 
@@ -65,7 +128,8 @@ function populateSearchNamespaces(namespaces) {
 
 // Search vectors in a namespace
 async function searchNamespace(namespace, query, limit) {
-  elements.searchResults.innerHTML = '<div class="loading">Searching...</div>';
+  setLoading('search', true);
+  showLoading(elements.searchResults, "Searching...");
   
   try {
     const response = await fetch(`/pinecone-admin/api/namespace/${namespace}/search?query=${encodeURIComponent(query)}&top_k=${limit}`);
@@ -75,14 +139,16 @@ async function searchNamespace(namespace, query, limit) {
     renderSearchResults(data);
   } catch (error) {
     console.error('Error searching:', error);
-    elements.searchResults.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+    showError(elements.searchResults, error.message);
+  } finally {
+    setLoading('search', false);
   }
 }
 
 // Render search results
 function renderSearchResults(data) {
   if (!data.results || data.results.length === 0) {
-    elements.searchResults.innerHTML = '<div class="no-data">No results found</div>';
+    showNoData(elements.searchResults, "No results found");
     return;
   }
 
@@ -143,7 +209,7 @@ function renderIndexInfo(data) {
 // Render namespaces list
 function renderNamespaces(data) {
   if (Object.keys(data.namespaces).length === 0) {
-    elements.namespacesList.innerHTML = '<div class="no-data">No namespaces found</div>';
+    showNoData(elements.namespacesList, "No namespaces found");
     return;
   }
 
@@ -185,7 +251,8 @@ async function showNamespaceDetails(namespace, displayName) {
 
 // Fetch sample vectors from namespace
 async function fetchNamespaceSamples(namespace) {
-  elements.namespaceSamples.innerHTML = '<div class="loading">Loading samples...</div>';
+  setLoading('samples', true);
+  showLoading(elements.namespaceSamples, "Loading samples...");
   
   try {
     const response = await fetch(`/pinecone-admin/api/namespace/${namespace}/sample`);
@@ -195,14 +262,16 @@ async function fetchNamespaceSamples(namespace) {
     renderSamples(data.samples);
   } catch (error) {
     console.error('Error fetching samples:', error);
-    elements.namespaceSamples.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+    showError(elements.namespaceSamples, error.message);
+  } finally {
+    setLoading('samples', false);
   }
 }
 
 // Render sample vectors
 function renderSamples(samples) {
   if (!samples || samples.length === 0) {
-    elements.namespaceSamples.innerHTML = '<div class="no-data">No samples available</div>';
+    showNoData(elements.namespaceSamples, "No samples available");
     return;
   }
 
@@ -251,8 +320,7 @@ async function clearNamespace() {
   if (!state.selectedNamespace) return;
   
   // Show loading state
-  elements.clearNamespaceBtn.disabled = true;
-  elements.clearNamespaceBtn.textContent = 'Clearing...';
+  setLoading('clearOperation', true);
   
   try {
     const response = await fetch(`/pinecone-admin/api/namespace/${state.selectedNamespace}`, {
@@ -262,12 +330,10 @@ async function clearNamespace() {
     if (!response.ok) throw new Error('Failed to clear namespace');
     
     // Show success message
-    elements.namespaceSamples.innerHTML = `
-      <div class="success-message">
-        Namespace data cleared successfully. 
-        <a href="/pinecone-admin">Refresh</a> to see updated stats.
-      </div>
-    `;
+    showSuccess(elements.namespaceSamples, `
+      Namespace data cleared successfully.
+      <a href="/pinecone-admin">Refresh</a> to see updated stats.
+    `);
     
     // Re-fetch samples (should be empty now)
     setTimeout(() => {
@@ -276,10 +342,9 @@ async function clearNamespace() {
     
   } catch (error) {
     console.error('Error clearing namespace:', error);
-    elements.namespaceSamples.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+    showError(elements.namespaceSamples, error.message);
   } finally {
-    elements.clearNamespaceBtn.disabled = false;
-    elements.clearNamespaceBtn.textContent = 'Clear Namespace Data';
+    setLoading('clearOperation', false);
   }
 }
 

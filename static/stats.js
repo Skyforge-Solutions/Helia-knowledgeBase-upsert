@@ -6,7 +6,8 @@ const state = {
   status: '',
   bot: '',
   sortBy: 'submitted_at',
-  sortOrder: 'desc'
+  sortOrder: 'desc',
+  isLoading: false
 };
 
 // DOM elements
@@ -16,6 +17,8 @@ const elements = {
   sortBy: document.getElementById('sortBy'),
   sortOrder: document.getElementById('sortOrder'),
   refreshButton: document.getElementById('refreshButton'),
+  refreshBtnText: document.querySelector('#refreshButton .btn-text'),
+  refreshBtnLoading: document.querySelector('#refreshButton .btn-loading'),
   prevPage: document.getElementById('prevPage'),
   nextPage: document.getElementById('nextPage'),
   pageInfo: document.getElementById('pageInfo'),
@@ -91,12 +94,33 @@ function getStatusClass(status) {
   return `status-${status}`;
 }
 
+// Show loading state
+function setLoading(isLoading) {
+  state.isLoading = isLoading;
+  
+  // Update refresh button state
+  elements.refreshButton.disabled = isLoading;
+  elements.refreshBtnText.style.display = isLoading ? 'none' : 'inline-block';
+  elements.refreshBtnLoading.style.display = isLoading ? 'inline-block' : 'none';
+
+  // Update pagination buttons
+  elements.prevPage.disabled = isLoading || state.currentPage <= 1;
+  elements.nextPage.disabled = isLoading || state.currentPage >= state.totalPages;
+}
+
 // Fetch data from API based on current filters and pagination
 async function fetchData() {
-  // Show loading state
+  setLoading(true);
+  
+  // Show loading state in table
   elements.tableBody.innerHTML = `
     <tr class="loading-row">
-      <td colspan="6">Loading data...</td>
+      <td colspan="6">
+        <div class="loading-container">
+          <div class="loading-spinner"></div>
+          <div>Loading data...</div>
+        </div>
+      </td>
     </tr>
   `;
   
@@ -126,10 +150,28 @@ async function fetchData() {
   } catch (error) {
     elements.tableBody.innerHTML = `
       <tr class="error-row">
-        <td colspan="6">Error loading data: ${error.message}</td>
+        <td colspan="6">
+          <div class="message error">
+            Error loading data: ${error.message}
+          </div>
+        </td>
       </tr>
     `;
+    
+    // Clear summary data on error
+    resetSummaryData();
+  } finally {
+    setLoading(false);
   }
+}
+
+// Reset summary data to show dashes when there's an error
+function resetSummaryData() {
+  elements.totalCount.textContent = '-';
+  elements.completedCount.textContent = '-';
+  elements.pendingCount.textContent = '-';
+  elements.failedCount.textContent = '-';
+  elements.processingCount.textContent = '-';
 }
 
 // Update the table with link data
@@ -137,7 +179,7 @@ function updateTable(links) {
   if (!links || links.length === 0) {
     elements.tableBody.innerHTML = `
       <tr>
-        <td colspan="6">No records found</td>
+        <td colspan="6" class="no-data">No records found</td>
       </tr>
     `;
     return;
@@ -167,9 +209,9 @@ function updateSummary(summary) {
 // Update pagination controls
 function updatePagination(total) {
   state.totalPages = Math.ceil(total / state.limit);
-  elements.pageInfo.textContent = `Page ${state.currentPage} of ${state.totalPages}`;
-  elements.prevPage.disabled = state.currentPage <= 1;
-  elements.nextPage.disabled = state.currentPage >= state.totalPages;
+  elements.pageInfo.textContent = `Page ${state.currentPage} of ${state.totalPages || 1}`;
+  elements.prevPage.disabled = state.isLoading || state.currentPage <= 1;
+  elements.nextPage.disabled = state.isLoading || state.currentPage >= state.totalPages;
 }
 
 // Event handlers
@@ -200,14 +242,14 @@ elements.refreshButton.addEventListener('click', () => {
 });
 
 elements.prevPage.addEventListener('click', () => {
-  if (state.currentPage > 1) {
+  if (state.currentPage > 1 && !state.isLoading) {
     state.currentPage--;
     fetchData();
   }
 });
 
 elements.nextPage.addEventListener('click', () => {
-  if (state.currentPage < state.totalPages) {
+  if (state.currentPage < state.totalPages && !state.isLoading) {
     state.currentPage++;
     fetchData();
   }

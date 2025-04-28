@@ -2,25 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pinecone Admin</title>
   <link rel="stylesheet" href="/static/style.css">
   <link rel="stylesheet" href="/static/pinecone_admin.css">
 </head>
 <body>
-  <div class="container admin-container">
-    <nav class="nav-links">
-      <a href="/" class="nav-link">Upload</a>
-      <a href="/stats" class="nav-link">Stats</a>
-      <a href="/pinecone-admin" class="nav-link active">Pinecone Admin</a>
-    </nav>
+  <header class="app-header">
+    <div class="nav-container">
+      <nav class="nav-links">
+        <a href="/" class="nav-link">Upload</a>
+        <a href="/stats" class="nav-link">Stats</a>
+        <a href="/pinecone-admin" class="nav-link active">Pinecone Admin</a>
+      </nav>
+    </div>
+  </header>
 
+  <div class="container admin-container">
     <h1>Pinecone Database Admin</h1>
     
     <div class="index-info-container">
       <div class="info-panel">
         <h2>Index Information</h2>
         <div class="info-content" id="index-info">
-          <div class="loading">Loading index information...</div>
+          <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <div>Loading index information...</div>
+          </div>
         </div>
       </div>
     </div>
@@ -51,7 +59,12 @@
               </select>
             </div>
           </div>
-          <button type="submit" class="view-btn">Search</button>
+          <button type="submit" id="search-button">
+            <span class="btn-text">Search</span>
+            <span class="btn-loading" style="display: none;">
+              <div class="loading-spinner"></div>
+            </span>
+          </button>
         </form>
         <div id="search-results" class="search-results">
           <!-- Search results will be displayed here -->
@@ -62,7 +75,10 @@
     <div class="namespaces-container">
       <h2>Namespaces</h2>
       <div id="namespaces-list">
-        <div class="loading">Loading namespaces...</div>
+        <div class="loading-container">
+          <div class="loading-spinner"></div>
+          <div>Loading namespaces...</div>
+        </div>
       </div>
     </div>
 
@@ -77,7 +93,10 @@
       <div class="samples-container">
         <h3>Sample Vectors</h3>
         <div id="namespace-samples">
-          <div class="loading">Loading samples...</div>
+          <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <div>Loading samples...</div>
+          </div>
         </div>
       </div>
     </div>
